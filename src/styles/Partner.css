@@ -1,0 +1,76 @@
+/* ========================= */
+/* Partner Page */
+/* ========================= */
+
+.partner-page {
+  padding: 40px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.partner-title {
+  font-size: 28px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.partner-card {
+  background-color: #670e66;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.partner-success {
+  color: #16a34a;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.partner-info {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.partner-input-group {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+}
+
+.partner-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.partner-btn {
+  background-color: #eda23a;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.partner-btn:hover {
+  background-color: #6d28d9;
+}
+
+.partner-error {
+  margin-top: 12px;
+  color: #dc2626;
+  font-size: 14px;
+}
+
+.partner-uid {
+  background-color: #e5e7eb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: monospace;
+  display: inline-block;
+  margin-top: 6px;
+}

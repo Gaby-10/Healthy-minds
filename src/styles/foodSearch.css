@@ -1,0 +1,99 @@
+.food-search {
+  margin-top: 16px;
+}
+
+.flex-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.flex-search h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+/*tochange*/
+.food-search input {
+  width: 25%;
+  padding: 5px 8px;    
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  font-size: 14px;
+}
+
+.food-search input:focus {
+  border-color: #ce04ed;
+  border-width: 3px;
+}
+
+.search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #d8a7d8;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Left side (image + name) */
+.search-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-item-left img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 6px;
+  background-color: #eee;
+}
+
+
+/* Text */
+.search-item-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+}
+
+.search-item-calories {
+  font-size: 13px;
+  color: #333;
+}
+
+.search-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-controls button {
+  background-color: #7c3aed;
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+
+.search-controls button:hover {
+  background-color: #2563eb;
+}
+
+.search-controls span {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 600;
+}
