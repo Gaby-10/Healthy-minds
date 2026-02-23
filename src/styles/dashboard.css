@@ -1,14 +1,25 @@
 /* ========================= */
-/* Dashboard layout */
+/* Dashboard Layout */
 /* ========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 .dashboard-layout {
   display: flex;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
-/* Sidebar */
+/* ========================= */
+/* Sidebar - KEEP YOUR EXISTING STYLES */
+/* ========================= */
+
 .sidebar {
   width: 240px;
   background-color: #1f2933;
@@ -16,31 +27,47 @@
   display: flex;
   flex-direction: column;
   padding: 1.5rem 1rem;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
 }
 
 .logo {
   margin-bottom: 2rem;
   text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
 }
 
 .nav-links {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex: 1;
 }
 
 .nav-links button {
   background: none;
   border: none;
   color: #e5e7eb;
-  padding: 10px;
+  padding: 12px 15px;
   text-align: left;
   border-radius: 6px;
   cursor: pointer;
+  width: 100%;
+  font-size: 15px;
+  transition: all 0.2s;
 }
 
 .nav-links button:hover {
   background-color: #374151;
+}
+
+.nav-links button.active {
+  background-color: #7c3aed;
+  color: white;
 }
 
 .logout-btn {
@@ -48,37 +75,52 @@
   background-color: #ef4444;
   border: none;
   color: white;
-  padding: 12px;
+  padding: 12px 15px;
   border-radius: 6px;
   cursor: pointer;
+  width: 100%;
+  font-size: 15px;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
 }
 
 /* ========================= */
-/* Dashboard content */
+/* Dashboard Content */
 /* ========================= */
 
 .dashboard-content {
   flex: 1;
+  margin-left: 240px;
+  width: calc(100% - 240px);
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   overflow-y: auto;
 }
 
 .user-info {
   font-size: 14px;
-  color: #d1d5db;
-  background-color: #40012d ;
-} 
+  color: white;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 12px 20px;
+  margin: 20px 30px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
 /* ========================= */
 /* Tracker Page */
 /* ========================= */
 
 .tracker-page {
+  padding: 20px 30px;
   min-height: 100%;
-  background-color: #a86fa7; /* purple background */
-  padding: 40px;
 }
 
 .tracker-container {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   color: white;
 }
@@ -92,136 +134,59 @@
 .tracker-title {
   font-family: cursive;
   font-size: 36px;
+  color: white;
+  margin-bottom: 10px;
 }
 
-.tracker-goals {
-  text-align: left;
-  max-width: 300px;
-}
-
-/* ========================= */
 /* Add Meals Section */
-/* ========================= */
+.add-meals-box {
+  background-color: white;
+  color: #333;
+  padding: 28px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
 
+.add-meals-box h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
 
-.track-calandpro{
+/* Goals Input Row */
+.track-calandpro {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 20px;
   margin-bottom: 24px;
-
+  flex-wrap: wrap;
 }
 
 .track-calandpro label {
   font-size: 14px;
   font-weight: 500;
+  color: #555;
   margin-right: 4px;
 }
 
 .track-calandpro input {
   width: 100px;
-  padding: 6px 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.add-meals-box {
-  background-color: #e5e5e5;
-  color: #111;
-  padding: 28px;
-  border-radius: 10px;
-  margin-bottom: 40px;
-}
-
-.add-meals-box h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 22px;
-  font-weight: 600;
-}
-.add-meals-box select,
-.add-meals-box input {
-  display: flex ;
-  width: 10%;
-  padding: 5px;
-  margin-top: 0px;
-}
-
-.meal-select{
-  display: flex;
-  align-items: flex-end;
-  gap: 20px;
-  margin-bottom: 20px;
-} 
-
-   
-
-/* ========================= */
-/* Meals Grid */
-/* ========================= */
-
-.meals-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-/* ========================= */
-/* Meal Cards */
-/* ========================= */
-
-.meal-card {
-  background-color: #e5e5e5;
-  color: #111;
-  padding: 16px;
-  border-radius: 4px;
-  font-family: serif;
-  min-height: 220px;
-}
-
-.meal-item {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.meal-sub {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
   font-size: 14px;
-  color: #444;
 }
 
-.meal-controls button {
-  background-color: #c026d3;
-  border: none;
-  color: white;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.meal-controls span {
-  margin: 0 8px;
-}
-
-.meal-total {
-  margin-top: 16px;
-  border-top: 1px solid #999;
-  padding-top: 8px;
-  font-weight: bold;
-}
-
-/* ========================= */
-/* Progress Bars */
-/* ========================= */
-
-
-.progress-section{
+/* Progress Section */
+.progress-section {
   margin-bottom: 28px;
 }
 
-.progress-item{
+.progress-item {
   margin-bottom: 16px;
 }
 
@@ -229,12 +194,13 @@
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 6px;
+  color: #555;
 }
 
 .progress-bar {
   width: 100%;
   height: 10px;
-  background-color: #ddd;
+  background-color: #eee;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -245,34 +211,440 @@
 }
 
 .progress-fill.calorie {
-  background-color: #7c3aed; /* purple */
+  background-color: #7c3aed;
 }
 
 .progress-fill.protein {
-  background-color: #22c55e; /* green */
+  background-color: #22c55e;
 }
 
+/* Meal Type Select */
+.meal-select {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.meal-select label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+.meal-select select {
+  padding: 8px 15px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+/* Meals Grid */
+.meals-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Meal Cards */
+.meal-card {
+  background-color: white;
+  color: #333;
+  padding: 16px;
+  border-radius: 8px;
+  min-height: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.meal-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: #7c3aed;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.no-food {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.meal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.meal-item:last-child {
+  border-bottom: none;
+}
+
+.meal-sub {
+  font-size: 14px;
+  color: #666;
+}
+
+.meal-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meal-controls button {
+  background-color: #7c3aed;
+  border: none;
+  color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.meal-controls button:hover {
+  background-color: #6d28d9;
+  transform: scale(1.1);
+}
+
+.meal-controls span {
+  font-weight: 600;
+  color: #333;
+  min-width: 20px;
+  text-align: center;
+}
+
+.meal-total {
+  margin-top: 16px;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+  font-weight: bold;
+  color: #7c3aed;
+  font-size: 15px;
+}
+
+/* ========================= */
+/* Partner Page Styles */
+/* ========================= */
+
+.partner-page {
+  padding: 20px;
+}
+
+.partner-header {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.partner-title {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+}
+
+.partner-badge {
+  background: #e8f5e9;
+  padding: 8px 16px;
+  border-radius: 30px;
+  color: #2e7d32;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  background: #4caf50;
+  border-radius: 50%;
+}
+
+.partner-content {
+  display: flex;
+  gap: 20px;
+  min-height: calc(100vh - 200px);
+}
+
+.partner-sidebar {
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.partner-meals-view {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+/* Progress Cards */
+.progress-overview {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.progress-card {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.progress-icon {
+  width: 45px;
+  height: 45px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.progress-details {
+  flex: 1;
+}
+
+.progress-label {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.progress-bar-container {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.progress-bar-fill.calories {
+  background: #7c3aed;
+}
+
+.progress-bar-fill.protein {
+  background: #22c55e;
+}
+
+.progress-numbers {
+  font-size: 12px;
+  color: #666;
+}
+
+/* ========================= */
+/* History Calendar Page */
+/* ========================= */
+
+.history-calendar-page {
+  padding: 20px;
+}
+
+.calendar-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.month-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.month-name {
+  margin: 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.nav-btn {
+  width: 35px;
+  height: 35px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover {
+  background: #7c3aed;
+  color: white;
+  border-color: #7c3aed;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+.legend-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.legend-dot.achieved { background: #4caf50; }
+.legend-dot.partial { background: #ffc107; }
+.legend-dot.missed { background: #f44336; }
+.legend-dot.empty { background: #e0e0e0; }
+
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.calendar-day.achieved { background: #4caf50; color: white; }
+.calendar-day.partial { background: #ffc107; color: white; }
+.calendar-day.missed { background: #f44336; color: white; }
+.calendar-day.empty { background: #f5f5f5; border: 1px dashed #ddd; cursor: default; }
+
+.calendar-day:hover:not(.empty) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.day-number {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.monthly-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+}
 
 /* ========================= */
 /* Responsive */
 /* ========================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .meals-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  
+  .partner-content {
+    flex-direction: column;
+  }
+  
+  .partner-sidebar {
+    width: 100%;
+  }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .dashboard-layout {
     flex-direction: column;
   }
-
+  
   .sidebar {
     width: 100%;
+    height: auto;
+    position: relative;
   }
-
+  
+  .dashboard-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
   .meals-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .track-calandpro {
+    justify-content: flex-start;
+  }
+  
+  .monthly-stats {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

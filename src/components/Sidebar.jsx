@@ -1,30 +1,60 @@
-import { signOut } from "firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase/firebase";
-import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import "../styles/Sidebar.css";
 
 function Sidebar() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await signOut(auth);
-    navigate("/login");
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   return (
     <div className="sidebar">
-      <h2 className="logo">Healthy Diet</h2>
-
-      <nav className="nav-links">
-        <button>Dashboard</button>
-        <button>🍽 Calories</button>
-        <button>💧 Water</button>
-        <button onClick={()=> navigate("/partner")}>🤝 Partner</button>
-        <button>📅 History</button>
+      <div className="sidebar-header">
+        <h2>Healthy Diet</h2>
+      </div>
+      
+      <nav className="sidebar-nav">
+        <Link to="/dashboard" className="nav-link">
+          <span className="nav-icon">📊</span>
+          Dashboard
+        </Link>
+        
+        <Link to="/dashboard" className="nav-link">
+          <span className="nav-icon">🔥</span>
+          Calories
+        </Link>
+        
+        <Link to="/dashboard" className="nav-link">
+          <span className="nav-icon">💧</span>
+          Water
+        </Link>
+        
+        <Link to="/partner" className="nav-link">
+          <span className="nav-icon">👥</span>
+          Partner
+        </Link>
+        
+        {/* 👇 HISTORY LINK - MAKE SURE THIS EXISTS */}
+        <Link to="/history" className="nav-link">
+          <span className="nav-icon">📅</span>
+          History
+        </Link>
       </nav>
-
-      <button className="logout-btn" onClick={handleLogout}>
-        Logout
-      </button>
+      
+      <div className="sidebar-footer">
+        <button onClick={handleLogout} className="logout-btn">
+          <span className="nav-icon">🚪</span>
+          Logout
+        </button>
+      </div>
     </div>
   );
 }

@@ -3,8 +3,8 @@ import FoodSearch from "./FoodSearch";
 import MealCard from "./MealCard";
 import { saveDailyLog } from "../utils/SaveDailyLog";
 import { useAuth } from "../context/AuthContext";
-import { doc, getDoc } from "firebase/firestore"; // Add this import
-import { db } from "../firebase/firebase"; // Add this import
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/firebase";
 
 const FOOD_DB = [
   { id: "banana", name: "Banana", calories: 105, protein: 7 },
@@ -19,7 +19,8 @@ function CalorieTracker() {
   const [calorieGoal, setCalorieGoal] = useState(2000);
   const [proteinGoal, setProteinGoal] = useState(100);
   const [currentMeal, setCurrentMeal] = useState("breakfast");
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
+  const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
 
   const [meals, setMeals] = useState({
     breakfast: [],
@@ -28,45 +29,72 @@ function CalorieTracker() {
     other: [],
   });
 
-  // 🔥 FIX: Load meals from Firebase when component mounts
+  // Check for date change and load appropriate meals
   useEffect(() => {
     if (!user) return;
 
-    async function loadTodayMeals() {
-      try {
-        const today = new Date().toISOString().split('T')[0];
-        const logRef = doc(db, "dailyLogs", user.uid, "logs", today);
-        const logSnap = await getDoc(logRef);
-        
-        if (logSnap.exists()) {
-          const data = logSnap.data();
-          console.log("📥 Loading saved meals from Firebase:", data.meals);
-          setMeals(data.meals || {
-            breakfast: [],
-            lunch: [],
-            dinner: [],
-            other: [],
-          });
-          setCalorieGoal(data.calorieGoal || 2000);
-          setProteinGoal(data.proteinGoal || 100);
-        } else {
-          console.log("📥 No saved meals found, using empty state");
-        }
-      } catch (error) {
-        console.error("Error loading meals:", error);
-      } finally {
-        setLoading(false);
-      }
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Check if date has changed since last visit
+    const lastVisitedDate = localStorage.getItem(`lastDate_${user.uid}`);
+    
+    if (lastVisitedDate !== today) {
+      console.log("📅 New day detected! Loading fresh meals for:", today);
+      // New day - reset meals to empty
+      setMeals({
+        breakfast: [],
+        lunch: [],
+        dinner: [],
+        other: [],
+      });
+      // Save the new date
+      localStorage.setItem(`lastDate_${user.uid}`, today);
     }
+    
+    // Load today's meals from Firebase
+    loadTodayMeals(today);
+    
+  }, [user]);
 
-    loadTodayMeals();
-  }, [user]); // Only run when user changes
+  const loadTodayMeals = async (date) => {
+    try {
+      const logRef = doc(db, "dailyLogs", user.uid, "logs", date);
+      const logSnap = await getDoc(logRef);
+      
+      if (logSnap.exists()) {
+        const data = logSnap.data();
+        console.log("📥 Loading meals for", date, ":", data.meals);
+        setMeals(data.meals || {
+          breakfast: [],
+          lunch: [],
+          dinner: [],
+          other: [],
+        });
+        setCalorieGoal(data.calorieGoal || 2000);
+        setProteinGoal(data.proteinGoal || 100);
+      } else {
+        console.log("📥 No meals found for", date, "- starting fresh");
+        setMeals({
+          breakfast: [],
+          lunch: [],
+          dinner: [],
+          other: [],
+        });
+      }
+    } catch (error) {
+      console.error("Error loading meals:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Save meals whenever they change
   useEffect(() => {
-    if (!user || loading) return; // Don't save while loading
+    if (!user || loading) return;
 
-    console.log("💾 Saving daily log for user:", user.uid);
+    const today = new Date().toISOString().split('T')[0];
+    console.log("💾 Saving meals for:", today);
+    
     saveDailyLog(user.uid, {
       meals,
       calorieGoal,
@@ -132,6 +160,16 @@ function CalorieTracker() {
 
   return (
     <div className="tracker-container">
+      {/* Optional: Show current date */}
+      <div style={{ textAlign: 'right', marginBottom: '10px', color: '#666' }}>
+        📅 {new Date().toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })}
+      </div>
+
       <div className="tracker-header">
         <h1 className="tracker-title">Diet Tracker</h1>
       </div>
@@ -154,17 +192,17 @@ function CalorieTracker() {
             onChange={(e) => setProteinGoal(Number(e.target.value))}
           />
         </div>
-
+        
         <div className="progress-section">
           <div className="progress-item">
             <div className="progress-label">
               Calories: {totalCalories} / {calorieGoal} kcal
             </div>
             <div className="progress-bar">
-              <div
-                className="progress-fill calorie"
-                style={{ width: `${caloriePercent}%` }}
-              />
+              <div 
+                className="progress-fill calorie" 
+                style={{width: `${caloriePercent}%`}}
+              /> 
             </div>
           </div>
 
@@ -173,9 +211,9 @@ function CalorieTracker() {
               Protein: {totalProtein} / {proteinGoal} g
             </div>
             <div className="progress-bar">
-              <div
-                className="progress-fill protein"
-                style={{ width: `${proteinPercent}%` }}
+              <div 
+                className="progress-fill protein" 
+                style={{width: `${proteinPercent}%`}}
               />
             </div>
           </div>
@@ -237,7 +275,7 @@ function CalorieTracker() {
           onIncrease={increaseServings}
           onDecrease={decreaseServings}
         />
-      </div>
+      </div> 
     </div>
   );
 }
