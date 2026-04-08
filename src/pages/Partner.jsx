@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getUserDoc } from "../utils/getUserDoc";
 import { linkPartner } from "../utils/linkPartner";
@@ -6,6 +7,7 @@ import { usePartner } from "../context/PartnerContext";
 import "../styles/Partner.css";
 
 function Partner() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { partner, partnerLogs, loading: partnerLoading, fetchPartnerData, clearPartnerData } = usePartner();
 
@@ -87,9 +89,14 @@ function Partner() {
 
   return (
     <div className="partner-page">
-      {/* Header with minimal partner info */}
+      {/* Header with Back Button */}
       <div className="partner-header">
-        <h2 className="partner-title">Partner Dashboard</h2>
+        <div className="header-left">
+          <button className="back-btn" onClick={() => navigate('/dashboard')}>
+            ← Back to Dashboard
+          </button>
+          <h2 className="partner-title">Partner Dashboard</h2>
+        </div>
         {userData.partnerId && (
           <div className="partner-badge" onClick={() => setShowUid(!showUid)}>
             <span className="badge-dot"></span>
@@ -101,7 +108,7 @@ function Partner() {
         )}
       </div>
 
-      {/* Main Content Area - Fixed Height */}
+      {/* Main Content Area */}
       <div className="partner-content">
         {/* Left Column - Partner Linking */}
         <div className="partner-sidebar">

@@ -1,128 +1,149 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase/firebase";
+import CustomFoodManager from "./CustomFoodManager";
 import "../styles/foodSearch.css";
-import { searchFood } from "../api/foodApi";
 
-function FoodSearch({ meals, currentMeal, onAdd, onIncrease, onDecrease }) {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+function FoodSearch({ foodsData, meals, currentMeal, onAdd, onIncrease, onDecrease }) {
+  const { user } = useAuth();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [customFoods, setCustomFoods] = useState([]);
+  const [showCustomManager, setShowCustomManager] = useState(false);
 
-  // Check if food already exists in current meal
-  const getMealForFood = (foodId) => {
-    return meals[currentMeal]?.find((m) => m.foodId === foodId);
+  // Load custom foods
+  useEffect(() => {
+    if (user) {
+      loadCustomFoods();
+    }
+  }, [user]);
+
+  const loadCustomFoods = async () => {
+    try {
+      const foodsRef = collection(db, "users", user.uid, "customFoods");
+      const snapshot = await getDocs(foodsRef);
+      const foods = snapshot.docs.map(doc => ({
+        id: `custom_${doc.id}`,
+        name: doc.data().name,
+        calories: doc.data().calories,
+        protein: doc.data().protein,
+        isFavorite: doc.data().isFavorite || false,
+        isCustom: true
+      }));
+      setCustomFoods(foods);
+    } catch (error) {
+      console.error("Error loading custom foods:", error);
+    }
   };
 
-  const handleSearch = async (value) => {
-    setQuery(value);
-
-    if (value.length < 2) {
-      setResults([]);
+  // Search function
+  const handleSearch = () => {
+    if (!searchTerm.trim()) {
+      setSearchResults([]);
       return;
     }
 
-    setLoading(true);
+    const term = searchTerm.toLowerCase();
+    
+    // Search in API foods
+    const apiResults = foodsData.filter(food => 
+      food.name.toLowerCase().includes(term)
+    ).map(food => ({ ...food, isCustom: false }));
 
-    try {
-      const apiFoods = await searchFood(value);
+    // Search in custom foods
+    const customResults = customFoods.filter(food => 
+      food.name.toLowerCase().includes(term)
+    ).map(food => ({ ...food, isCustom: true }));
 
-      const normalizedFoods = apiFoods.map((food) => {
-        const calories = food.foodNutrients.find(
-          (n) => n.nutrientName === "Energy"
-        )?.value || 0;
+    // Combine results (custom foods first)
+    setSearchResults([...customResults, ...apiResults]);
+  };
 
-        const protein = food.foodNutrients.find(
-          (n) => n.nutrientName === "Protein"
-        )?.value || 0;
-
-        return {
-          id: food.fdcId,
-          name: food.description,
-          calories: Math.round(calories),
-          protein: Math.round(protein),
-          image: "/foods/default.png",
-        };
-      });
-
-      setResults(normalizedFoods);
-    } catch (err) {
-      console.error("USDA search error:", err);
-    }
-
-    setLoading(false);
+  const handleAddCustomToMeal = (food) => {
+    onAdd(food);
   };
 
   return (
     <div className="food-search">
-      <div className="flex-search">
-        <label>Search food :</label>
-        <input
-          type="text"
-          placeholder="Search food (e.g. banana)"
-          value={query}
-          onChange={(e) => handleSearch(e.target.value)}
-        />
+      <div className="search-header">
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="Search food (e.g., banana)"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <button onClick={handleSearch}>Search</button>
+        </div>
+        <button 
+          className="manage-custom-btn"
+          onClick={() => setShowCustomManager(!showCustomManager)}
+        >
+          {showCustomManager ? "Hide Custom Foods" : "📝 My Custom Foods"}
+        </button>
       </div>
 
-      {loading && <p style={{ color: "gray" }}>Searching…</p>}
+      {/* Custom Food Manager */}
+      {showCustomManager && (
+        <CustomFoodManager onAddToMeal={handleAddCustomToMeal} />
+      )}
 
-      {results.map((food) => {
-        const meal = getMealForFood(food.id);
+      {/* Search Results */}
+      {searchResults.length > 0 && (
+        <div className="search-results">
+          <h4>Search Results:</h4>
+          <div className="results-list">
+            {searchResults.map((food) => (
+              <div key={food.id} className="result-item">
+                <div className="result-info">
+                  <span className="food-name">
+                    {food.isCustom && "🏠 "}{food.name}
+                    {food.isFavorite && " ⭐"}
+                  </span>
+                  <span className="food-nutrition">
+                    {food.calories} kcal | {food.protein}g protein
+                  </span>
+                </div>
+                <button 
+                  className="add-btn"
+                  onClick={() => onAdd(food)}
+                >
+                  Add to {currentMeal}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-        return (
-          <div
-            key={food.id}
-            className="search-item"
-            onClick={() => {
-              if (meal) {
-                onIncrease(currentMeal, food.id);
-              } else {
-                onAdd(food);
-              }
-            }}
-          >
-            <div className="search-item-left">
-              <img src={food.image} alt={food.name} />
-              <div>
-                <div className="search-item-name">{food.name}</div>
-                <div className="search-item-calories">
-                  {food.calories} kcal · {food.protein} g protein
+      {/* Current Meal Items */}
+      <div className="current-meal-items">
+        <h4>Current {currentMeal}:</h4>
+        {meals[currentMeal]?.length === 0 ? (
+          <p className="no-items">No items added yet</p>
+        ) : (
+          <div className="meal-items-list">
+            {meals[currentMeal].map((item, index) => (
+              <div key={index} className="meal-item-row">
+                <span className="item-name">
+                  {item.food?.name}
+                  {item.food?.isCustom && " 🏠"}
+                </span>
+                <span className="item-nutrition">
+                  {item.food?.calories * item.servings} cal | {item.food?.protein * item.servings}g
+                </span>
+                <div className="item-controls">
+                  <button onClick={() => onDecrease(currentMeal, item.foodId)}>-</button>
+                  <span>{item.servings}</span>
+                  <button onClick={() => onIncrease(currentMeal, item.foodId)}>+</button>
                 </div>
               </div>
-            </div>
-
-            <div
-              className="search-controls"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {meal ? (
-                <>
-                  <button
-                    onClick={() =>
-                      onDecrease(currentMeal, food.id)
-                    }
-                  >
-                    −
-                  </button>
-                  <span>{meal.servings}</span>
-                  <button onClick={()=> {
-                    if(meal) {
-                      onIncrease(currentMeal, food.id);
-
-                    }else {
-                      onAdd(food);
-                    }
-        
-                  }}>
-                    +
-                  </button>
-                </>
-              ) : (
-                <button>+</button>
-              )}
-            </div>
+            ))}
           </div>
-        );
-      })}
+        )}
+      </div>
     </div>
   );
 }

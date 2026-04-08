@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { usePartner } from "../context/PartnerContext";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
@@ -6,6 +7,7 @@ import { db } from "../firebase/firebase";
 import "../styles/HistoryCalendar.css";
 
 function HistoryCalendar() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { partner } = usePartner();
   
@@ -25,6 +27,32 @@ function HistoryCalendar() {
   const [view, setView] = useState('mine');
   const [showMealModal, setShowMealModal] = useState(false);
   const [selectedDateTotals, setSelectedDateTotals] = useState({ calories: 0, protein: 0 });
+
+  // Helper function to get local date string (YYYY-MM-DD)
+  const getLocalDateString = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Format date for display
+  const formatDate = (dateStr) => {
+    const [year, month, day] = dateStr.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return date.toLocaleDateString('default', { 
+      weekday: 'long', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+
+  // Check if date is today
+  const isToday = (dateStr) => {
+    const today = new Date();
+    const todayStr = getLocalDateString(today);
+    return dateStr === todayStr;
+  };
 
   // Load data when component mounts or view changes
   useEffect(() => {
@@ -57,7 +85,7 @@ function HistoryCalendar() {
     // Add all days of the month
     for (let d = 1; d <= lastDay.getDate(); d++) {
       const date = new Date(year, month, d);
-      const dateString = date.toISOString().split('T')[0];
+      const dateString = getLocalDateString(date);
       days.push({
         date: dateString,
         day: d,
@@ -139,15 +167,13 @@ function HistoryCalendar() {
       let streak = 0;
       let longestStreak = 0;
       const today = new Date();
+      const todayStr = getLocalDateString(today);
       
-      // Sort dates
-      achievedDates.sort().reverse();
-      
-      // Calculate current streak
+      // Calculate current streak (consecutive days up to today)
       for (let i = 0; i < 30; i++) {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
-        const dateStr = date.toISOString().split('T')[0];
+        const dateStr = getLocalDateString(date);
         
         if (achievedDates.includes(dateStr)) {
           streak++;
@@ -236,16 +262,16 @@ function HistoryCalendar() {
 
   const monthName = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-  // Check if date is today
-  const isToday = (dateStr) => {
-    return dateStr === new Date().toISOString().split('T')[0];
-  };
-
   return (
     <div className="history-calendar-page">
-      {/* Header */}
+      {/* Header with Back Button */}
       <div className="calendar-header">
-        <h1 className="calendar-title">Goal History</h1>
+        <div className="header-left">
+          <button className="back-btn" onClick={() => navigate('/dashboard')}>
+            ← Back to Dashboard
+          </button>
+          <h1 className="calendar-title">Goal History</h1>
+        </div>
         
         {partner && (
           <div className="calendar-view-toggle">
@@ -362,13 +388,7 @@ function HistoryCalendar() {
         <div className="modal-overlay" onClick={() => setShowMealModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>
-                {new Date(selectedDate.date).toLocaleDateString('default', { 
-                  weekday: 'long', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
-              </h2>
+              <h2>{formatDate(selectedDate.date)}</h2>
               <button className="close-btn" onClick={() => setShowMealModal(false)}>×</button>
             </div>
 

@@ -229,7 +229,7 @@
 .meal-select label {
   font-size: 14px;
   font-weight: 500;
-  color: #555;
+  color: #3b3535;
 }
 
 .meal-select select {
@@ -237,7 +237,7 @@
   border-radius: 6px;
   border: 1px solid #ddd;
   font-size: 14px;
-  background-color: white;
+  background-color: rgb(63, 66, 66);
   cursor: pointer;
 }
 

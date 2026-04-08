@@ -161,7 +161,7 @@ function CalorieTracker() {
   return (
     <div className="tracker-container">
       {/* Optional: Show current date */}
-      <div style={{ textAlign: 'right', marginBottom: '10px', color: '#666' }}>
+      <div style={{ textAlign: 'right', marginBottom: '10px', color: '#ffc400' }}>
         📅 {new Date().toLocaleDateString('en-US', { 
           weekday: 'long', 
           year: 'numeric', 
